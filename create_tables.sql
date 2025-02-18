@@ -97,3 +97,11 @@ ADD CONSTRAINT fk_order_product_product_id FOREIGN KEY (product_id) REFERENCES P
 
 ALTER TABLE Payment 
 ADD CONSTRAINT fk_payment_order_id FOREIGN KEY (order_id) REFERENCES `Order`(id) ON DELETE CASCADE;
+
+
+-- Adding Indexes
+-- for fast login
+CREATE INDEX idx_email on User(email);
+
+-- for fast product search
+CREATE INDEX idx_product_name on Product(name);
