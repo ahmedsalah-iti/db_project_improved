@@ -194,7 +194,7 @@ BEGIN
          trStatus
     );
      
-    IF getUserBalance2(user) = newUserBalance AND isDone = TRUE THEN 
+    IF getUserBalance2(userID) = newUserBalance AND isDone = TRUE THEN 
         RETURN isDone;
     else
         SET isDone = FALSE;

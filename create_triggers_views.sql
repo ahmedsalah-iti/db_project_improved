@@ -1,5 +1,6 @@
 -- SOURCE /home/as/Desktop/db_project_improved/create_tables.sql; SOURCE /home/as/Desktop/db_project_improved/create_functions.sql; SOURCE /home/as/Desktop/db_project_improved/create_triggers_views.sql;
 
+/*
 DELIMITER //
 create TRIGGER after_cash_payment
 AFTER INSERT ON Payment
@@ -41,6 +42,35 @@ BEGIN
     end if;
 
 END //
+DELIMITER ;
+*/
+DELIMITER //
+
+CREATE TRIGGER before_cash_payment
+BEFORE INSERT ON Payment
+FOR EACH ROW
+BEGIN
+    DECLARE orderPrice DECIMAL(10,2);
+    DECLARE orderUserId INT;
+    DECLARE userBalance DECIMAL(10,2);
+
+    SET orderPrice = getOrderTotalPrice(NEW.order_id);
+    SELECT user_id INTO orderUserId FROM `Order` WHERE id = NEW.order_id;
+    SET userBalance = getUserBalance(orderUserId);
+
+    IF NEW.method = 'cash' THEN
+        IF userBalance >= orderPrice THEN
+            IF (subUserBalance(orderUserId, orderPrice)) THEN
+                SET NEW.status = 'completed';
+            ELSE
+                SET NEW.status = 'failed';
+            END IF;
+        ELSE
+            SET NEW.status = 'failed';
+        END IF;
+    END IF;
+END //
+
 DELIMITER ;
 
 /*
