@@ -1,4 +1,5 @@
 -- SOURCE /home/as/Desktop/db_project_improved/create_tables.sql;
+
 drop database if exists cafeteria;
 create database cafeteria;
 use cafeteria;
@@ -34,7 +35,7 @@ CREATE TABLE Wallet_Transaction(
     amount decimal(10,2) not null,
     balance_before decimal(10,2) not null,
     balance_after decimal(10,2) not null,
-    status ENUM('pending','completed','failed') DEFAULT 'pending' NOT NULL,
+    status ENUM('completed','failed') DEFAULT 'failed' NOT NULL,
     made_at DATETIME DEFAULT CURRENT_TIMESTAMP not null
 );
 
@@ -67,7 +68,7 @@ CREATE TABLE Order_Product (
 CREATE TABLE Payment (
     id INT AUTO_INCREMENT PRIMARY KEY,
     date DATETIME DEFAULT CURRENT_TIMESTAMP,
-    status ENUM('pending', 'completed', 'failed') NOT NULL,
+    status ENUM('pending', 'completed', 'failed') DEFAULT 'pending' NOT NULL,
     method ENUM('cash', 'delivery', 'online') NOT NULL,
     order_id INT NOT NULL
 );
@@ -93,7 +94,7 @@ ADD CONSTRAINT fk_order_room_id FOREIGN KEY (room_id) REFERENCES Room(id) ON DEL
 
 ALTER TABLE Order_Product 
 ADD CONSTRAINT fk_order_product_order_id FOREIGN KEY (order_id) REFERENCES `Order`(id) ON DELETE CASCADE,
-ADD CONSTRAINT fk_order_product_product_id FOREIGN KEY (product_id) REFERENCES Product(id) ON DELETE SET NULL;
+ADD CONSTRAINT fk_order_product_product_id FOREIGN KEY (product_id) REFERENCES Product(id) ON DELETE RESTRICT;
 
 ALTER TABLE Payment 
 ADD CONSTRAINT fk_payment_order_id FOREIGN KEY (order_id) REFERENCES `Order`(id) ON DELETE CASCADE;
